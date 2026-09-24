@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#fbf5f1"><title>Visão geral · Dindas Cake</title><link rel="stylesheet" href="/style.css"><script type="module" src="/scripts/app.js"></script></head>
+<body data-page="dashboard"><main id="page-content" class="page-content">
+  <section class="welcome-row"><div><p class="eyebrow">SEU ESTOQUE, EM EQUILÍBRIO</p><h2>Um panorama <em>fresquinho.</em></h2><p class="page-intro">Acompanhe o que está disponível e o que precisa de atenção.</p></div><a class="button button-primary" href="/estoque">＋ <span>Novo produto</span></a></section>
+  <section class="stat-grid" aria-label="Resumo do estoque">
+    <article class="stat-card"><span class="stat-label">Produtos ativos</span><strong id="total-products">0</strong><span class="stat-foot">tipos cadastrados</span><span class="stat-stamp">✿</span></article>
+    <article class="stat-card stat-card-peach"><span class="stat-label">Unidades no estoque</span><strong id="total-units">0</strong><span class="stat-foot">em todos os produtos</span><span class="stat-stamp">◌</span></article>
+    <article class="stat-card stat-card-green"><span class="stat-label">Maior quantidade</span><strong class="stat-name" id="max-product">—</strong><span class="stat-foot" id="max-units">Sem produtos</span><span class="stat-stamp">↗</span></article>
+    <article class="stat-card stat-card-lilac"><span class="stat-label">Menor quantidade</span><strong class="stat-name" id="min-product">—</strong><span class="stat-foot" id="min-units">Sem produtos</span><span class="stat-stamp">↘</span></article>
+  </section>
+  <section class="dashboard-grid">
+    <article class="surface chart-card"><div class="section-heading"><div><span class="eyebrow">VISÃO COMPARATIVA</span><h3>Quantidade por produto</h3></div><span class="unit-tag">UNIDADES</span></div><div id="bars" class="bar-list"></div></article>
+    <article class="surface chart-card share-card"><div class="section-heading"><div><span class="eyebrow">COMPOSIÇÃO</span><h3>Como o estoque se divide</h3></div></div><div id="shares" class="share-content"></div></article>
+  </section>
+  <section class="surface attention-card"><div class="section-heading"><div><span class="eyebrow">OLHO NO ESTOQUE</span><h3>Precisam de reposição</h3></div><a class="quiet-link" href="/estoque">Ver estoque <span>→</span></a></div><div id="low-list" class="attention-list"></div></section>
+</main></body></html>
