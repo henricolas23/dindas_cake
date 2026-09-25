@@ -6,6 +6,10 @@ Aplicação web para consultar produtos, acompanhar níveis de estoque, registra
 
 - Node.js 20 ou superior e npm.
 
+## E-mail nas contas
+
+O cadastro salva um e-mail junto ao usuário e permite entrar com o nome de usuário ou o endereço de e-mail. O e-mail de contas existentes pode ser cadastrado ou atualizado pelo painel **Configurações → Perfis da equipe**.
+
 ## Configurar
 
 No terminal, entre nesta pasta e instale as dependências:
@@ -14,13 +18,15 @@ No terminal, entre nesta pasta e instale as dependências:
 npm install
 ```
 
-Copie `.env.example` para `.env` e preencha `SESSION_SECRET`, `ADMIN_USER` e `ADMIN_PASSWORD`. Gere um segredo aleatório para a sessão com:
+Para iniciar o sistema localmente, o `.env` é opcional e uma chave de sessão será gerada automaticamente. Também é possível definir `ADMIN_USER` e `ADMIN_PASSWORD` para criar uma conta administrativa inicial; `ADMIN_EMAIL` é opcional.
+
+Em produção, configure `SESSION_SECRET` com um valor longo e aleatório. Gere um segredo com:
 
 ```sh
 node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"
 ```
 
-Use uma senha forte para a conta administrativa. Ela é criada na primeira inicialização, com o hash armazenado no banco SQLite.
+As senhas das contas são armazenadas com hash bcrypt. A senha original nunca é gravada no banco.
 
 ## Executar
 
@@ -38,8 +44,9 @@ npm run dev
 
 - `/dashboard` — indicadores, comparativo de quantidades, distribuição percentual e alertas.
 - `/estoque` — busca, ordenação, cadastro, edição, exclusão e movimentação.
-- `/movimentacoes` — histórico das últimas 200 entradas, saídas e ajustes.
-- `/configuracoes` — limite global de alerta de estoque baixo.
+- `/movimentacoes` — histórico completo, com filtros rápidos e intervalo de datas personalizado.
+- `/configuracoes` — limite de estoque baixo e edição dos perfis de acesso.
+- `/criar-conta` — cadastro de um novo usuário para acessar o sistema.
 
 ## Organização do código
 
@@ -53,6 +60,7 @@ public/pages/             uma página HTML por seção do sistema
 public/scripts/api.js     comunicação com a API
 public/scripts/components/ navegação e diálogos reutilizáveis
 public/scripts/pages/     lógica específica de cada página
+src/routes/users.js       consulta e edição dos perfis de acesso
 public/styles/main.css    identidade visual, componentes e responsividade
 ```
 

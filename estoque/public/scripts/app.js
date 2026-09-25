@@ -4,7 +4,7 @@ import { mountShell } from './components/shell.js';
 import { productDialog, movementDialog } from './components/dialogs.js';
 import { renderDashboard } from './pages/dashboard.js';
 import { renderStock } from './pages/stock.js';
-import { renderHistory } from './pages/history.js';
+import { mountHistory } from './pages/history.js';
 import { mountSettings } from './pages/settings.js';
 
 const page = document.body.dataset.page;
@@ -28,12 +28,12 @@ async function saveProduct(product, id = '') {
 async function start() {
   try {
     const session = await api('/session');
-    if (!session.user) return window.location.replace('/');
+    if (!session.user) return window.location.replace('/entrar');
     mountShell(page, session.user.username);
 
     if (page === 'dashboard' || page === 'stock') await loadProducts();
-    if (page === 'history') renderHistory(await api('/movements'));
-    if (page === 'settings') await mountSettings();
+    if (page === 'history') await mountHistory();
+    if (page === 'settings') await mountSettings(session.user);
 
     $('#add-product')?.addEventListener('click', () => productDialog(null, (product) => saveProduct(product)));
     $('#empty-add')?.addEventListener('click', () => productDialog(null, (product) => saveProduct(product)));
@@ -59,7 +59,7 @@ async function start() {
       }
     });
   } catch (error) {
-    if (error.message.includes('login')) window.location.replace('/');
+    if (error.message.includes('login')) window.location.replace('/entrar');
     else { console.error(error); showToast('Não foi possível carregar esta página. Atualize e tente novamente.'); }
   }
 }

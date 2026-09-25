@@ -20,7 +20,7 @@ export function mountShell(activePage, username) {
         ${Object.entries(pages).map(([key, page]) => `<a class="side-link ${key === activePage ? 'is-active' : ''}" href="${page.href}" ${key === activePage ? 'aria-current="page"' : ''}><span class="side-icon">${page.icon}</span><span>${page.label}</span>${key === activePage ? '<i class="active-mark"></i>' : ''}</a>`).join('')}
       </nav>
       <div class="sidebar-note"><span>✿</span><p>Feito com cuidado,<br>do estoque à vitrine.</p></div>
-      <div class="user-card"><span class="avatar">${escapeHtml(username.slice(0, 1).toUpperCase())}</span><span class="user-info"><b>${escapeHtml(username)}</b><small>Administradora</small></span><button id="logout" class="logout-button" aria-label="Sair da conta" title="Sair">↗</button></div>
+      <div class="user-card"><span class="avatar">${escapeHtml(username.slice(0, 1).toUpperCase())}</span><span class="user-info"><b>${escapeHtml(username)}</b><small>Perfil da equipe</small></span><button id="logout" class="logout-button" aria-label="Sair da conta" title="Sair">↗</button></div>
     </aside>
     <div class="app-main"><header class="topbar"><div class="crumb"><span>DINDAS CAKE</span><b>/</b><strong>${item.label}</strong></div><div class="topbar-date"><span class="date-flower">✿</span><time id="today"></time></div></header></div>`;
   document.body.prepend(shell);

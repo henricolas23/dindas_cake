@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fbf5f1">
+  <title>Criar conta · Dindas Cake</title>
+  <link rel="stylesheet" href="/styles/main.css">
+  <script type="module" src="/scripts/signup.js"></script>
+</head>
+<body class="login-page">
+  <main class="login-layout">
+    <section class="login-story">
+      <a class="wordmark" href="/"><span class="wordmark-flower">d</span><span>Dindas Cake<small>GESTÃO DE ESTOQUE</small></span></a>
+      <div class="story-copy"><span class="eyebrow">UM COMEÇO LEVE PARA ORGANIZAR</span><h1>Seu espaço<br>para cuidar<br>de cada <em>detalhe.</em></h1><p>Crie sua conta para começar a acompanhar os produtos da confeitaria.</p><div class="story-decoration"><span>✿</span><i></i><span>♡</span><i></i><span>✿</span></div></div>
+      <span class="story-footer">DINDAS CAKE <span>·</span> CONTROLE INTERNO</span>
+    </section>
+    <section class="login-panel"><div class="login-box"><span class="eyebrow">PRIMEIRO ACESSO</span><h2>Criar conta</h2><p>Informe seus dados de acesso.</p>
+      <form id="signup-form"><label for="username">Usuário</label><input id="username" name="username" autocomplete="username" minlength="3" maxlength="32" pattern="[A-Za-z0-9._-]+" title="Use letras sem acento, números, ponto, hífen ou sublinhado." placeholder="Ex.: dindas.cake" required><label for="email">E-mail</label><input id="email" name="email" type="email" autocomplete="email" maxlength="254" placeholder="voce@exemplo.com" required><label for="password">Senha</label><input id="password" name="password" type="password" autocomplete="new-password" minlength="8" placeholder="Pelo menos 8 caracteres" required><label for="confirm-password">Confirmar senha</label><input id="confirm-password" name="confirmPassword" type="password" autocomplete="new-password" minlength="8" placeholder="Digite a senha novamente" required><p class="form-error" id="signup-error" role="alert"></p><button type="submit" class="button button-primary login-submit">Criar conta <span>→</span></button></form>
+      <p class="account-switch">Já tem uma conta? <a href="/entrar">Entrar <span>→</span></a></p>
+    </div></section>
+  </main>
+</body>
+</html>

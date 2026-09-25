@@ -80,9 +80,11 @@ async function initializeDatabase() {
   database.pragma('foreign_keys = ON');
   database.exec(`
     CREATE TABLE IF NOT EXISTS users (
-      id INTEGER PRIMARY KEY, username TEXT NOT NULL UNIQUE, password_hash TEXT NOT NULL,
+      id INTEGER PRIMARY KEY, username TEXT NOT NULL UNIQUE, email TEXT, email_verified INTEGER NOT NULL DEFAULT 0,
+      password_hash TEXT NOT NULL, auth_version INTEGER NOT NULL DEFAULT 0,
       created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     );
+    CREATE UNIQUE INDEX IF NOT EXISTS users_username_case_insensitive_idx ON users(LOWER(username));
     CREATE TABLE IF NOT EXISTS products (
       id INTEGER PRIMARY KEY, name TEXT NOT NULL COLLATE NOCASE UNIQUE,
       description TEXT DEFAULT '', category TEXT DEFAULT '',
@@ -99,16 +101,38 @@ async function initializeDatabase() {
     CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT NOT NULL);
     INSERT OR IGNORE INTO settings(key, value) VALUES ('low_stock_limit', '5');
   `);
+
+  const userColumns = database.prepare('PRAGMA table_info(users)').all();
+  if (!userColumns.some((column) => column.name === 'active')) {
+    database.exec('ALTER TABLE users ADD COLUMN active INTEGER NOT NULL DEFAULT 1');
+  }
+  if (!userColumns.some((column) => column.name === 'email')) {
+    database.exec('ALTER TABLE users ADD COLUMN email TEXT');
+  }
+  if (!userColumns.some((column) => column.name === 'email_verified')) {
+    database.exec('ALTER TABLE users ADD COLUMN email_verified INTEGER NOT NULL DEFAULT 0');
+  }
+  if (!userColumns.some((column) => column.name === 'auth_version')) {
+    database.exec('ALTER TABLE users ADD COLUMN auth_version INTEGER NOT NULL DEFAULT 0');
+  }
+  database.exec('CREATE UNIQUE INDEX IF NOT EXISTS users_email_case_insensitive_idx ON users(LOWER(email)) WHERE email IS NOT NULL');
+  database.exec('DROP TABLE IF EXISTS email_codes');
+  database.exec('CREATE INDEX IF NOT EXISTS movements_created_at_idx ON movements(created_at)');
 }
 
 function ensureInitialAdmin() {
   const username = process.env.ADMIN_USER?.trim();
   const password = process.env.ADMIN_PASSWORD;
-  if (!username || !password) throw new Error('Configure ADMIN_USER e ADMIN_PASSWORD no arquivo .env.');
-  const exists = database.prepare('SELECT id FROM users WHERE username = ?').get(username);
+  if (!username && !password) return;
+  if (!username || !password) throw new Error('Para criar a conta inicial por .env, defina ADMIN_USER e ADMIN_PASSWORD juntos.');
+  const exists = database.prepare('SELECT id, email FROM users WHERE username = ? COLLATE NOCASE').get(username);
   if (!exists) {
-    database.prepare('INSERT INTO users(username, password_hash) VALUES (?, ?)')
-      .run(username, bcrypt.hashSync(password, 12));
+    const email = String(process.env.ADMIN_EMAIL || '').trim().toLowerCase() || null;
+    database.prepare('INSERT INTO users(username, email, email_verified, password_hash) VALUES (?, ?, ?, ?)')
+      .run(username, email, email ? 1 : 0, bcrypt.hashSync(password, 12));
+  } else if (!exists.email && process.env.ADMIN_EMAIL?.trim()) {
+    database.prepare('UPDATE users SET email = ?, email_verified = 1 WHERE id = ?')
+      .run(process.env.ADMIN_EMAIL.trim().toLowerCase(), exists.id);
   }
 }
 

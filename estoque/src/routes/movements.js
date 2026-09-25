@@ -4,12 +4,26 @@ const { database } = require('../database');
 const router = express.Router();
 
 router.get('/', (request, response) => {
-  const movements = database.prepare(`
+  const { from, to } = request.query;
+  const hasRange = from !== undefined || to !== undefined;
+  const dateTimePattern = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/;
+  const isValidDateTime = (value) => {
+    if (!dateTimePattern.test(value || '')) return false;
+    const parsed = new Date(`${value.replace(' ', 'T')}Z`);
+    return !Number.isNaN(parsed.valueOf()) && parsed.toISOString().slice(0, 19).replace('T', ' ') === value;
+  };
+  if (hasRange && (!isValidDateTime(from) || !isValidDateTime(to) || from >= to)) {
+    return response.status(400).json({ error: 'Informe um período válido para filtrar as movimentações.' });
+  }
+
+  const query = `
     SELECT movements.*, users.username
     FROM movements LEFT JOIN users ON users.id = movements.user_id
-    ORDER BY movements.created_at DESC, movements.id DESC LIMIT 200
-  `).all();
-  response.json(movements);
+    ${hasRange ? 'WHERE movements.created_at >= ? AND movements.created_at < ?' : ''}
+    ORDER BY movements.created_at DESC, movements.id DESC
+  `;
+  const movements = hasRange ? database.prepare(query).all(from, to) : database.prepare(query).all();
+  return response.json(movements);
 });
 
 router.post('/:productId', (request, response) => {
